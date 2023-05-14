@@ -13,6 +13,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.content.Intent
+import android.telecom.TelecomManager
 import android.net.Uri
 import java.lang.Exception
 import android.telephony.TelephonyManager
@@ -45,7 +46,7 @@ internal class FlutterPhoneDirectCallerHandler :
     MethodCallHandler, RequestPermissionsResultListener {
     private var activityPluginBinding: ActivityPluginBinding? = null
     private var number: String? = null
-    private var speaker: Boolean? = null
+    private var speaker: String? = null
     private var flutterResult: MethodChannel.Result? = null
     fun setActivityPluginBinding(activityPluginBinding: ActivityPluginBinding) {
         this.activityPluginBinding = activityPluginBinding
@@ -57,8 +58,6 @@ internal class FlutterPhoneDirectCallerHandler :
         if (call.method == "callNumber") {
             number = call.argument("number")
             speaker = call.argument("speaker")
-            Log.d("Caller", "Message")
-            number = number!!.replace("#".toRegex(), "%23")
             if (!number!!.startsWith("tel:")) {
                 number = String.format("tel:%s", number)
             }
@@ -112,12 +111,12 @@ internal class FlutterPhoneDirectCallerHandler :
             1
         }
 
-    private fun callNumber(number: String?, speaker: Boolean?): Boolean {
+    private fun callNumber(number: String?, speaker: String?): Boolean {
         return try {
             val intent = Intent(if (isTelephonyEnabled) Intent.ACTION_CALL else Intent.ACTION_VIEW)
             intent.data = Uri.parse(number)
-            if(speaker == true) {
-                intent.putExtra("android.intent.extra.SPEAKERPHONE_ON", true)
+            if(speaker == "1") {
+               intent.putExtra(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true)
             }
             activity.startActivity(intent)
             true

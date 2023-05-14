@@ -6,7 +6,7 @@ class FlutterPhoneDirectCaller {
   static const MethodChannel _channel =
       MethodChannel('flutter_phone_direct_caller');
 
-  static Future<bool?> callNumber(String number, bool speaker) async {
+  static Future<bool?> callNumber(String number, String speaker) async {
     return await _channel.invokeMethod(
       'callNumber',
       <String, Object>{
