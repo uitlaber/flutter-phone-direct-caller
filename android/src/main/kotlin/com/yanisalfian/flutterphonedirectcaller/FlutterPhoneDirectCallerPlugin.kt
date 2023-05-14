@@ -10,6 +10,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.PluginRegistry.RequestPermissionsResultListener
 import io.flutter.plugin.common.MethodCall
 import android.content.pm.PackageManager
+import android.telecom.TelecomManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.content.Intent
@@ -45,7 +46,7 @@ internal class FlutterPhoneDirectCallerHandler :
     MethodCallHandler, RequestPermissionsResultListener {
     private var activityPluginBinding: ActivityPluginBinding? = null
     private var number: String? = null
-    private var speaker: Boolean? = false
+    private var speaker: Boolean = false
     private var flutterResult: MethodChannel.Result? = null
     fun setActivityPluginBinding(activityPluginBinding: ActivityPluginBinding) {
         this.activityPluginBinding = activityPluginBinding
