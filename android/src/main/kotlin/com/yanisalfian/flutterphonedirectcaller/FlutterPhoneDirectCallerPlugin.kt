@@ -45,7 +45,7 @@ internal class FlutterPhoneDirectCallerHandler :
     MethodCallHandler, RequestPermissionsResultListener {
     private var activityPluginBinding: ActivityPluginBinding? = null
     private var number: String? = null
-    private var speaker: Boolean = false
+    private var speaker: Boolean? = null
     private var flutterResult: MethodChannel.Result? = null
     fun setActivityPluginBinding(activityPluginBinding: ActivityPluginBinding) {
         this.activityPluginBinding = activityPluginBinding
@@ -112,7 +112,7 @@ internal class FlutterPhoneDirectCallerHandler :
             1
         }
 
-    private fun callNumber(number: String?, speaker: Boolean = false): Boolean {
+    private fun callNumber(number: String?, speaker: Boolean?): Boolean {
         return try {
             val telecomManager = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
             val intent = Intent(if (isTelephonyEnabled) Intent.ACTION_CALL else Intent.ACTION_VIEW)
