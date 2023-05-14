@@ -114,10 +114,11 @@ internal class FlutterPhoneDirectCallerHandler :
 
     private fun callNumber(number: String?, speaker: Boolean?): Boolean {
         return try {
-            val telecomManager = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
             val intent = Intent(if (isTelephonyEnabled) Intent.ACTION_CALL else Intent.ACTION_VIEW)
             intent.data = Uri.parse(number)
-            intent.putExtra(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, speaker);
+            if(speaker == true) {
+                intent.putExtra("android.intent.extra.SPEAKERPHONE_ON", true)
+            }
             activity.startActivity(intent)
             true
         } catch (e: Exception) {
