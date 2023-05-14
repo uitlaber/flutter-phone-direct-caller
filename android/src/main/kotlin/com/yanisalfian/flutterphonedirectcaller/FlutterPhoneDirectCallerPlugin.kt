@@ -10,7 +10,6 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.PluginRegistry.RequestPermissionsResultListener
 import io.flutter.plugin.common.MethodCall
 import android.content.pm.PackageManager
-import android.telecom.TelecomManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.content.Intent
@@ -115,6 +114,7 @@ internal class FlutterPhoneDirectCallerHandler :
 
     private fun callNumber(number: String?, speaker: Boolean = false): Boolean {
         return try {
+            val telecomManager = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
             val intent = Intent(if (isTelephonyEnabled) Intent.ACTION_CALL else Intent.ACTION_VIEW)
             intent.data = Uri.parse(number)
             intent.putExtra(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, speaker);
