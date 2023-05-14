@@ -45,6 +45,7 @@ internal class FlutterPhoneDirectCallerHandler :
     MethodCallHandler, RequestPermissionsResultListener {
     private var activityPluginBinding: ActivityPluginBinding? = null
     private var number: String? = null
+    private var speaker: Boolean? = false
     private var flutterResult: MethodChannel.Result? = null
     fun setActivityPluginBinding(activityPluginBinding: ActivityPluginBinding) {
         this.activityPluginBinding = activityPluginBinding
@@ -55,6 +56,7 @@ internal class FlutterPhoneDirectCallerHandler :
         flutterResult = result
         if (call.method == "callNumber") {
             number = call.argument("number")
+            speaker = call.argument("speaker")
             Log.d("Caller", "Message")
             number = number!!.replace("#".toRegex(), "%23")
             if (!number!!.startsWith("tel:")) {
@@ -63,7 +65,7 @@ internal class FlutterPhoneDirectCallerHandler :
             if (permissionStatus != 1) {
                 requestsPermission()
             } else {
-                result.success(callNumber(number))
+                result.success(callNumber(number, speaker))
             }
         } else {
             result.notImplemented()
@@ -82,7 +84,7 @@ internal class FlutterPhoneDirectCallerHandler :
                     return false
                 }
             }
-            flutterResult!!.success(callNumber(number))
+            flutterResult!!.success(callNumber(number, speaker))
         }
         return true
     }
@@ -110,10 +112,11 @@ internal class FlutterPhoneDirectCallerHandler :
             1
         }
 
-    private fun callNumber(number: String?): Boolean {
+    private fun callNumber(number: String?, speaker: Boolean = false): Boolean {
         return try {
             val intent = Intent(if (isTelephonyEnabled) Intent.ACTION_CALL else Intent.ACTION_VIEW)
             intent.data = Uri.parse(number)
+            intent.putExtra(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, speaker);
             activity.startActivity(intent)
             true
         } catch (e: Exception) {
