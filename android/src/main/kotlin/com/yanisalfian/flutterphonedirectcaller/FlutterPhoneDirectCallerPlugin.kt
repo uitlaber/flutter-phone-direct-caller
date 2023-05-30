@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.content.Intent
 import android.telecom.TelecomManager
+import android.os.Bundle
 import android.net.Uri
 import java.lang.Exception
 import android.telephony.TelephonyManager
@@ -113,12 +114,13 @@ internal class FlutterPhoneDirectCallerHandler :
 
     private fun callNumber(number: String?, speaker: String?): Boolean {
         return try {
-            val intent = Intent(if (isTelephonyEnabled) Intent.ACTION_CALL else Intent.ACTION_VIEW)
-            intent.data = Uri.parse(number)
-            if(speaker == "1") {
-               intent.putExtra(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true)
+            val telecomManager = activity.getSystemService("telecom") as TelecomManager
+            val callUri = Uri.parse(number)
+            val outgoingExtras = Bundle()
+            if(speaker == "true") {
+                outgoingExtras.putBoolean("android.telecom.extra.START_CALL_WITH_SPEAKERPHONE", true)
             }
-            activity.startActivity(intent)
+            telecomManager.placeCall(callUri, outgoingExtras)
             true
         } catch (e: Exception) {
             Log.d("Caller", "error: " + e.message)
